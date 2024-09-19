@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastConsole", "FastConsole\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastConsole.Examples", "FastConsole.Examples\FastConsole.Examples.csproj", "{56F3692A-A376-4A00-B916-58F8DC11F705}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game", "Game\Game.csproj", "{7D6E7DAB-64ED-4647-A59D-AF322D6AFCD3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{56F3692A-A376-4A00-B916-58F8DC11F705}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{56F3692A-A376-4A00-B916-58F8DC11F705}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{56F3692A-A376-4A00-B916-58F8DC11F705}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D6E7DAB-64ED-4647-A59D-AF322D6AFCD3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D6E7DAB-64ED-4647-A59D-AF322D6AFCD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D6E7DAB-64ED-4647-A59D-AF322D6AFCD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D6E7DAB-64ED-4647-A59D-AF322D6AFCD3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
