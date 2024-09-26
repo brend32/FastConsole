@@ -12,9 +12,11 @@ public class Player : Element
 	public bool IsAlive => Health > 0;
 
 	private Canvas _canvas;
+	private Map _map;
 
-	public Player(int health, int damage)
+	public Player(int health, int damage, Map map)
 	{
+		_map = map;
 		Health = health;
 		MaxHealth = health;
 		Damage = damage;
@@ -26,9 +28,19 @@ public class Player : Element
 		_canvas.Fill(Color.Purple, Color.FromArgb(153, 222, 35), '@');
 	}
 
+	public void Move(Point delta)
+	{
+		Point newPosition = new Point(Position.X + delta.X, Position.Y + delta.Y);
+
+		if (_map.IsPointInsideMap(newPosition))
+		{
+			Position = newPosition;
+		}
+	}
+
 	public override void Update()
 	{
-		_canvas.Position = Position;
+		_canvas.Position = new Point(Position.X * 2, Position.Y);
 		_canvas.Update();
 	}
 
