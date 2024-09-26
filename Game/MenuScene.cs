@@ -13,12 +13,18 @@ class MenuScene : Scene
 	{
 		_buttons = new[]
 		{
-			new MenuButton("Start", () => {}),
+			new MenuButton("Start", () =>
+			{
+				OpenScene(new GameScene());
+			}),
 			new MenuButton("About", () =>
 			{
 				OpenScene(new AboutScene());
 			}),
-			new MenuButton("Settings", () => {}),
+			new MenuButton("Settings", () =>
+			{
+				OpenScene(new SettingsScene());
+			}),
 			new MenuButton("Exit", () =>
 			{
 				SceneManager.Exit();
