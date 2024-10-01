@@ -3,14 +3,16 @@ using FastConsole.Engine.Elements;
 
 namespace Game;
 
-public class Player : Element
+public class Player : Element, IFightTurnEndListener
 {
 	public int Health { get; set; }
 	public int MaxHealth { get; set; }
 	public int Damage { get; set; }
-
+	public bool HasShield => _shieldLifeTime > 0;
+	
 	public bool IsAlive => Health > 0;
-
+	
+	private int _shieldLifeTime;
 	private Canvas _canvas;
 	private Map _map;
 
@@ -26,6 +28,35 @@ public class Player : Element
 			CellWidth = 2,
 		};
 		_canvas.Fill(Color.Purple, Color.FromArgb(153, 222, 35), '@');
+	}
+
+	public void Heal(int amount)
+	{
+		Health += amount;
+		Health = Math.Min(Health, MaxHealth);
+	}
+
+	public void ReceiveDamage(int amount)
+	{
+		if (HasShield)
+		{
+			amount = (int)Math.Ceiling(0.35 * amount);
+		}
+
+		Health -= amount;
+	}
+
+	public void ActivateShield()
+	{
+		_shieldLifeTime = 3;
+	}
+
+	public Decision MakeTurn(FightingArea fightingArea)
+	{
+		return new Decision("Heal", () =>
+		{
+			Heal(25);
+		});
 	}
 
 	public void Move(Point delta)
@@ -47,5 +78,13 @@ public class Player : Element
 	protected override void OnRender()
 	{
 		_canvas.Render();
+	}
+
+	public void OnTurnEnded()
+	{
+		if (_shieldLifeTime > 0)
+		{
+			_shieldLifeTime--;
+		}
 	}
 }
