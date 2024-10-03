@@ -7,11 +7,8 @@ public class Skeleton : EnemyBase
 		Health = 50;
 		MaxHealth = 50;
 		Damage = 30;
-	}
-	
-	protected override void OnRender()
-	{
-		
+
+		_name.Value = "Skeleton";
 	}
 
 	public override void ReceiveDamage(int amount)

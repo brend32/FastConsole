@@ -1,4 +1,7 @@
-﻿using FastConsole.Engine.Elements;
+﻿using System.Drawing;
+using FastConsole.Engine.Core;
+using FastConsole.Engine.Elements;
+using Game.Elements;
 using Game.Enemies;
 
 namespace Game;
@@ -14,6 +17,12 @@ public class FightingArea : Element
 	public List<EnemyBase> Enemies { get; set; }
 	public bool IsFighting { get; set; }
 	public bool IsPlayerWin { get; set; }
+
+	private PlayerAtArena _playerRenderer;
+	private FlexBox _enemiesFlexBox;
+	private FlexBox _playerFlexBox;
+	private FlexBox _arenaFlexBox;
+	private double _lastUpdate;
 	
 	private int TurnsInCycle => 1 + Enemies.Count;
 	private int _participantIndex;
@@ -22,16 +31,61 @@ public class FightingArea : Element
 	{
 		Player = player;
 		Enemies = new List<EnemyBase>();
+
+		_playerRenderer = new PlayerAtArena(player)
+		{
+			Size = new Size(16, 4)
+		};
+
+		_enemiesFlexBox = new FlexBox()
+		{
+			GrowDirection = GrowDirection.Horizontal,
+			Alignment = Alignment.Center,
+			Spacing = 1,
+			AlwaysRecalculate = true
+		};
+		_playerFlexBox = new FlexBox()
+		{
+			GrowDirection = GrowDirection.Horizontal,
+			Alignment = Alignment.Center,
+			Spacing = 1,
+			AlwaysRecalculate = true
+		};
+
+		_arenaFlexBox = new FlexBox()
+		{
+			GrowDirection = GrowDirection.Vertical,
+			Alignment = Alignment.Center,
+			AlwaysRecalculate = true
+		};
+		
+		_playerFlexBox.Children.Add(_playerRenderer);
+		_arenaFlexBox.Children.Add(_enemiesFlexBox);
+		_arenaFlexBox.Children.Add(_playerFlexBox);
 	}
 	
 	public override void Update()
 	{
+		_playerFlexBox.Size = new Size(Size.Width, 7);
+		_enemiesFlexBox.Size = new Size(Size.Width, 7);
+
+		_arenaFlexBox.Spacing = 2;
+
+		_arenaFlexBox.Size = Size;
+		_arenaFlexBox.Position = Position;
 		
+		_arenaFlexBox.Update();
+
+		if (Time.NowSeconds - _lastUpdate > 1)
+		{
+			ProcessCycle();
+			_lastUpdate = Time.NowSeconds;
+		}
 	}
 
 	protected override void OnRender()
 	{
-		
+		_arenaFlexBox.Render();
 	}
 
 	public void StartFight()
@@ -40,17 +94,24 @@ public class FightingArea : Element
 		_participantIndex = 0;
 
 		Enemies.Clear();
-		int enemiesAmount = Random.Shared.Next(1, 3);
+		int enemiesAmount = 3;//Random.Shared.Next(1, 3);
 		for (int i = 0; i < enemiesAmount; i++)
 		{
 			Enemies.Add(GetRandomEnemy());
 		}
 
-		// TODO: Refactor
-		while (IsFighting)
+		_enemiesFlexBox.Children.Clear();
+		foreach (EnemyBase enemy in Enemies)
 		{
-			ProcessCycle();
+			_enemiesFlexBox.Children.Add(enemy);
+			enemy.Size = new Size(24, 4);
 		}
+
+		// TODO: Refactor
+		//while (IsFighting)
+		//{
+		//	ProcessCycle();
+		//}
 	}
 
 	private EnemyBase GetRandomEnemy()

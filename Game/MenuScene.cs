@@ -2,13 +2,14 @@
 using FastConsole.Engine.Core;
 using FastConsole.Engine.Elements;
 using Game;
+using Game.Elements;
 
 class MenuScene : Scene
 {
 	private MenuButton[] _buttons;
 	private int _selectedIndex = 0;
 	private int _boxSize = 32;
-	
+
 	public MenuScene()
 	{
 		_buttons = new[]
@@ -37,6 +38,14 @@ class MenuScene : Scene
 			Value = "Adventure game\nversion: 0.1"
 		}));
 
+		Player player = new Player(100, 25, null);
+		FightingArea area = new FightingArea(player)
+		{
+			Size = new Size(80, 20),
+			Position = new Point(30, 0)
+		};
+		
+
 		FlexBox box = new FlexBox()
 		{
 			Size = new Size(32, _buttons.Length),
@@ -50,6 +59,10 @@ class MenuScene : Scene
 			button.Size = new Size(32, 1);
 		}
 		Elements.Add(box);	
+		
+		Elements.Add(area);
+		
+		area.StartFight();
 	}
 
 	public override void Update()

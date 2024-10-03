@@ -1,18 +1,19 @@
 ﻿using System.Drawing;
 using FastConsole.Engine.Elements;
+using Game.Enemies;
 
 namespace Game;
 
-public class Player : Element, IFightTurnEndListener
+public class Player : Element, IFightTurnEndListener, IEntity
 {
 	public int Health { get; set; }
 	public int MaxHealth { get; set; }
 	public int Damage { get; set; }
-	public bool HasShield => _shieldLifeTime > 0;
+	public int ShieldLifeTime { get; set; }
+	public bool HasShield => ShieldLifeTime > 0;
 	
 	public bool IsAlive => Health > 0;
-	
-	private int _shieldLifeTime;
+
 	private Canvas _canvas;
 	private Map _map;
 
@@ -48,15 +49,32 @@ public class Player : Element, IFightTurnEndListener
 
 	public void ActivateShield()
 	{
-		_shieldLifeTime = 3;
+		ShieldLifeTime = 3;
 	}
 
 	public Decision MakeTurn(FightingArea fightingArea)
 	{
-		return new Decision("Heal", () =>
+		int action = Random.Shared.Next(0, 3);
+
+		return action switch
 		{
-			Heal(25);
-		});
+			0 => new Decision("Heal", () =>
+			{
+				Heal(25);
+			}),
+			1 => new Decision("Activate shield", () =>
+			{
+				ActivateShield();
+			}),
+			2 => new Decision("Attack", () =>
+			{
+				EnemyBase enemy = fightingArea.Enemies.FirstOrDefault(enemy => enemy.IsAlive);
+				if (enemy == null)
+					return;
+
+				enemy.ReceiveDamage(Damage);
+			})
+		};
 	}
 
 	public void Move(Point delta)
@@ -82,9 +100,9 @@ public class Player : Element, IFightTurnEndListener
 
 	public void OnTurnEnded()
 	{
-		if (_shieldLifeTime > 0)
+		if (ShieldLifeTime > 0)
 		{
-			_shieldLifeTime--;
+			ShieldLifeTime--;
 		}
 	}
 }

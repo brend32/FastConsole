@@ -1,21 +1,26 @@
-﻿namespace Game.Enemies;
+﻿using System.Drawing;
+using FastConsole.Engine.Elements;
+
+namespace Game.Enemies;
 
 public class Creeper : EnemyBase, IFightTurnEndListener
 {
 	public int TimeToExplosion { get; set; } = 4;
 
-	public Creeper()
+	private Text _timeToExplodeText;
+
+	public Creeper() : base()
 	{
 		Health = 200;
 		MaxHealth = 200;
 		Damage = 350;
+
+		_name.Value = "Creeper";
+		_timeToExplodeText = new Text();
+		
+		_flexBox.Children.Add(_timeToExplodeText);
 	}
 	
-	protected override void OnRender()
-	{
-		
-	}
-
 	public override void ReceiveDamage(int amount)
 	{
 		if (Random.Shared.NextDouble() > 0.90)
@@ -29,6 +34,14 @@ public class Creeper : EnemyBase, IFightTurnEndListener
 	public void ResetExplosionTimer()
 	{
 		TimeToExplosion = 4;
+	}
+
+	public override void Update()
+	{
+		_timeToExplodeText.Value = $"Time to explode: {TimeToExplosion}";
+
+		_timeToExplodeText.Size = new Size(Size.Width - 2, 1);
+		base.Update();
 	}
 
 	public override Decision MakeTurn(FightingArea fightingArea)

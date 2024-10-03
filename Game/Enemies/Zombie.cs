@@ -7,12 +7,10 @@ public class Zombie : EnemyBase
 		Health = 100;
 		MaxHealth = 100;
 		Damage = 25;
-	}
-	
-	protected override void OnRender()
-	{
 		
+		_name.Value = "Zombie";
 	}
+
 
 	public override Decision MakeTurn(FightingArea area)
 	{

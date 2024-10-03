@@ -288,7 +288,7 @@ public class Renderer
 			OutputToConsole();
 		}
 	}
-
+	
 	public static void Write(string str, Color? foreground = null, Color? background = null, TextStyle style = TextStyle.None)
 	{
 		int x = CursorPosition.X;
