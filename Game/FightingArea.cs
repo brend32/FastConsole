@@ -20,6 +20,8 @@ public interface IFightParticipant
 
 public class FightingArea : Element
 {
+	public event Action<bool> OnFightEnd;
+	
 	public Player Player { get; set; }
 	public List<EnemyBase> Enemies { get; set; }
 	public bool IsFighting { get; set; }
@@ -101,6 +103,12 @@ public class FightingArea : Element
 		
 		_arenaFlexBox.Update();
 
+		if (IsFighting == false)
+		{
+			OnFightEnd?.Invoke(IsPlayerWin);
+			return;
+		}
+
 		if (IsFighting && Time.NowSeconds > _timeForNextUpdate)
 		{
 			ProcessCycle();
@@ -177,6 +185,7 @@ public class FightingArea : Element
 			decision.PerformAction();
 			_timeForNextUpdate = Time.NowSeconds + 3;
 			_participantIndex++;
+			TryEndFight();
 		}
 	}
 

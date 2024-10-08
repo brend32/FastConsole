@@ -72,7 +72,7 @@ public class Player : Element, IFightTurnEndListener, IEntity, IFightParticipant
 	{
 		Point newPosition = new Point(Position.X + delta.X, Position.Y + delta.Y);
 
-		if (_map.IsPointInsideMap(newPosition))
+		if (_map.IsPointInsideMap(newPosition) && _map.IsPointWalkable(newPosition))
 		{
 			Position = newPosition;
 		}
@@ -102,6 +102,30 @@ public class Player : Element, IFightTurnEndListener, IEntity, IFightParticipant
 		if (FightingArea?.IsFighting == true)
 		{
 			_playerAtArena.HandleInput(key);
+			return;
+		}
+		
+		switch (key)
+		{
+			case ConsoleKey.UpArrow:
+			case ConsoleKey.W:
+				Move(new Point(0, -1));
+				break;
+				
+			case ConsoleKey.DownArrow:
+			case ConsoleKey.S:
+				Move(new Point(0, 1));
+				break;
+				
+			case ConsoleKey.LeftArrow:
+			case ConsoleKey.A:
+				Move(new Point(-1, 0));
+				break;
+				
+			case ConsoleKey.RightArrow:
+			case ConsoleKey.D:
+				Move(new Point(1, 0));
+				break;
 		}
 	}
 }

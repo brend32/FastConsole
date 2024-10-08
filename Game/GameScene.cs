@@ -9,44 +9,51 @@ public class GameScene : Scene
 {
 	private Map _map;
 	private Player _player;
+	private double _timeForNextFight;
+	private bool _fromFight;
 	
 	public GameScene()
 	{
 		_map = new Map();
 
-		_player = new Player(100, 10, _map);	
+		_player = new Player(100, 10, _map);
 		
 		Elements.Add(_map);
 		Elements.Add(_player);
+		
+		UpdateFightTime();
+	}
+
+	private void UpdateFightTime()
+	{
+		_timeForNextFight = Time.NowSeconds + Random.Shared.Next(60, 85);
 	}
 	
 	public override void Update()
 	{
+		if (_fromFight)
+		{
+			UpdateFightTime();
+			_fromFight = false;
+		}
+		
 		while (Console.KeyAvailable)
 		{
 			ConsoleKeyInfo key = Console.ReadKey(true);
+			_player.HandleInput(key.Key);
+
 			switch (key.Key)
 			{
-				case ConsoleKey.UpArrow:
-				case ConsoleKey.W:
-					_player.Move(new Point(0, -1));
-					break;
-				
-				case ConsoleKey.DownArrow:
-				case ConsoleKey.S:
-					_player.Move(new Point(0, 1));
-					break;
-				
-				case ConsoleKey.LeftArrow:
-				case ConsoleKey.A:
-					_player.Move(new Point(-1, 0));
-					break;
-				
-				case ConsoleKey.RightArrow:
-				case ConsoleKey.D:
-					_player.Move(new Point(1, 0));
+				case ConsoleKey.J:
+					_timeForNextFight = Time.NowSeconds + 4;
 					break;
 			}
-		}	
+		}
+
+		if (_timeForNextFight < Time.NowSeconds)
+		{
+			OpenScene(new FightingScene(_player));
+			_fromFight = true;
+		}
 	}
 }

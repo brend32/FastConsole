@@ -10,8 +10,6 @@ class MenuScene : Scene
 	private int _selectedIndex = 0;
 	private int _boxSize = 32;
 
-	private FightingArea _area;
-
 	public MenuScene()
 	{
 		_buttons = new[]
@@ -40,14 +38,6 @@ class MenuScene : Scene
 			Value = "Adventure game\nversion: 0.1"
 		}));
 
-		Player player = new Player(100, 25, null);
-		FightingArea area = _area = new FightingArea(player)
-		{
-			Size = new Size(80, 20),
-			Position = new Point(30, 0)
-		};
-		
-
 		FlexBox box = new FlexBox()
 		{
 			Size = new Size(32, _buttons.Length),
@@ -61,10 +51,6 @@ class MenuScene : Scene
 			button.Size = new Size(32, 1);
 		}
 		Elements.Add(box);	
-		
-		Elements.Add(area);
-		
-		area.StartFight();
 	}
 
 	public override void Update()
@@ -79,11 +65,6 @@ class MenuScene : Scene
 		while (Console.KeyAvailable)
 		{
 			ConsoleKeyInfo key = Console.ReadKey(true);
-			if (_area.IsFighting)
-			{
-				_area.HandleInput(key.Key);
-				return;
-			}
 			
 			switch (key.Key)
 			{
