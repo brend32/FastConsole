@@ -11,6 +11,7 @@ public class Renderer
 	private static int _windowLastHeight;
 
 	public static bool DebugMode { get; set; } = false;
+	public static int DebugDelay { get; set; } = 500;
 	public static int Width => _renderBuffer.GetLength(0);
 	public static int Height => _renderBuffer.GetLength(1);
 	public static Point CursorPosition { get; set; }
@@ -379,7 +380,7 @@ public class Renderer
 
 		if (DebugMode)
 		{
-			Thread.Sleep(600);
+			Thread.Sleep(DebugDelay);
 		}
 	}
 	

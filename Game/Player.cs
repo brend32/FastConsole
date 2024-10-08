@@ -1,21 +1,27 @@
 ﻿using System.Drawing;
 using FastConsole.Engine.Elements;
+using Game.Elements;
 using Game.Enemies;
 
 namespace Game;
 
-public class Player : Element, IFightTurnEndListener, IEntity
+public class Player : Element, IFightTurnEndListener, IEntity, IFightParticipant
 {
 	public int Health { get; set; }
 	public int MaxHealth { get; set; }
 	public int Damage { get; set; }
 	public int ShieldLifeTime { get; set; }
 	public bool HasShield => ShieldLifeTime > 0;
+	public bool Highlighted { get; set; }
+	public FightingArea FightingArea { get; set; }
+
+	public PlayerAtArena AtArenaRenderer => _playerAtArena;
 	
 	public bool IsAlive => Health > 0;
 
 	private Canvas _canvas;
 	private Map _map;
+	private PlayerAtArena _playerAtArena;
 
 	public Player(int health, int damage, Map map)
 	{
@@ -23,6 +29,11 @@ public class Player : Element, IFightTurnEndListener, IEntity
 		Health = health;
 		MaxHealth = health;
 		Damage = damage;
+		
+		_playerAtArena = new PlayerAtArena(this)
+		{
+			Size = new Size(16, 4)
+		};
 
 		_canvas = new Canvas(new Size(1, 1))
 		{
@@ -54,27 +65,7 @@ public class Player : Element, IFightTurnEndListener, IEntity
 
 	public Decision MakeTurn(FightingArea fightingArea)
 	{
-		int action = Random.Shared.Next(0, 3);
-
-		return action switch
-		{
-			0 => new Decision("Heal", () =>
-			{
-				Heal(25);
-			}),
-			1 => new Decision("Activate shield", () =>
-			{
-				ActivateShield();
-			}),
-			2 => new Decision("Attack", () =>
-			{
-				EnemyBase enemy = fightingArea.Enemies.FirstOrDefault(enemy => enemy.IsAlive);
-				if (enemy == null)
-					return;
-
-				enemy.ReceiveDamage(Damage);
-			})
-		};
+		return _playerAtArena.MakeTurn(fightingArea);
 	}
 
 	public void Move(Point delta)
@@ -103,6 +94,14 @@ public class Player : Element, IFightTurnEndListener, IEntity
 		if (ShieldLifeTime > 0)
 		{
 			ShieldLifeTime--;
+		}
+	}
+
+	public void HandleInput(ConsoleKey key)
+	{
+		if (FightingArea?.IsFighting == true)
+		{
+			_playerAtArena.HandleInput(key);
 		}
 	}
 }

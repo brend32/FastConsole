@@ -5,13 +5,15 @@ using Game.Elements;
 
 namespace Game.Enemies;
 
-public abstract class EnemyBase : Element, IEntity
+public abstract class EnemyBase : Element, IEntity, IFightParticipant
 {
 	public int Health { get; protected set; }
 	public int MaxHealth { get; protected set; }
 	public int Damage { get; protected set; }
 
 	public bool IsAlive => Health > 0;
+	public bool Highlighted { get; set; }
+	public bool Selected { get; set; }
 	
 	protected Text _name;
 	private HealthBar _healthBar;
@@ -75,9 +77,13 @@ public abstract class EnemyBase : Element, IEntity
 
 			_damageText.Value = $"Damage: {Damage}";
 			_box.Child = _flexBox;
+			_box.Foreground = Highlighted ? Color.Coral : null;
+			_box.Background = Selected ? Color.SeaGreen : null;
 		}
 		else
 		{
+			_box.Foreground = null;
+			_box.Background = null;
 			_box.Child = _deadText;
 		}
 		

@@ -16,7 +16,7 @@ public class Zombie : EnemyBase
 	{
 		return new Decision("Attack", () =>
 		{
-
+			area.Player.ReceiveDamage(Damage);
 		});
 	}
 }

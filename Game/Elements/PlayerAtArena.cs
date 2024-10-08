@@ -15,6 +15,8 @@ public class PlayerAtArena : Element
 	private FlexBox _flexBox;
 	private Box _box;
 
+	private PlayerFightOptions _fightOptions;
+
 	public PlayerAtArena(Player player)
 	{
 		Player = player;
@@ -27,6 +29,11 @@ public class PlayerAtArena : Element
 		_healthBar = new HealthBar(player);
 		_damageText = new Text();
 		_shieldBar = new ShieldBar(player);
+
+		_fightOptions = new PlayerFightOptions()
+		{
+			Size = new Size(16, 7)
+		};
 
 		_flexBox = new FlexBox()
 		{
@@ -59,15 +66,48 @@ public class PlayerAtArena : Element
 		{
 			_box.Background = null;
 		}
+		
+		_box.Foreground = Player.Highlighted ? Color.Coral : null;
 
 		_box.Size = new Size(Size.Width, _flexBox.Children.Count + 2);
 		_box.Position = Position;
+
+		_fightOptions.Position = new Point(Position.X + _box.Size.Width + 2, Position.Y);
 		
+		_fightOptions.Update();
 		_box.Update();
+	}
+
+	public void HandleInput(ConsoleKey key)
+	{
+		if (_fightOptions.Active)
+		{
+			_fightOptions.HandleInput(key);
+		}
+	}
+
+	public Decision MakeTurn(FightingArea arena)
+	{
+		if (_fightOptions.Active)
+		{
+			Decision decision = _fightOptions.GetDecision();
+			if (decision != null)
+			{
+				_fightOptions.Active = false;
+			}
+
+			return decision;
+		}
+		else
+		{
+			_fightOptions.Show(arena);
+			return null;
+		}
 	}
 
 	protected override void OnRender()
 	{
 		_box.Render();
+		_fightOptions.Render();
 	}
 }

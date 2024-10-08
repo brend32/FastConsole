@@ -10,6 +10,8 @@ class MenuScene : Scene
 	private int _selectedIndex = 0;
 	private int _boxSize = 32;
 
+	private FightingArea _area;
+
 	public MenuScene()
 	{
 		_buttons = new[]
@@ -39,7 +41,7 @@ class MenuScene : Scene
 		}));
 
 		Player player = new Player(100, 25, null);
-		FightingArea area = new FightingArea(player)
+		FightingArea area = _area = new FightingArea(player)
 		{
 			Size = new Size(80, 20),
 			Position = new Point(30, 0)
@@ -77,6 +79,12 @@ class MenuScene : Scene
 		while (Console.KeyAvailable)
 		{
 			ConsoleKeyInfo key = Console.ReadKey(true);
+			if (_area.IsFighting)
+			{
+				_area.HandleInput(key.Key);
+				return;
+			}
+			
 			switch (key.Key)
 			{
 				case ConsoleKey.UpArrow:

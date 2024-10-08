@@ -11,6 +11,13 @@ public interface IFightTurnEndListener
 	void OnTurnEnded();
 }
 
+public interface IFightParticipant
+{
+	bool IsAlive { get; }
+	bool Highlighted { get; set; }
+	Decision MakeTurn(FightingArea area);
+} 
+
 public class FightingArea : Element
 {
 	public Player Player { get; set; }
@@ -18,11 +25,25 @@ public class FightingArea : Element
 	public bool IsFighting { get; set; }
 	public bool IsPlayerWin { get; set; }
 
-	private PlayerAtArena _playerRenderer;
+	public IFightParticipant Participant
+	{
+		get
+		{
+			if (_participantIndex >= TurnsInCycle)
+				return null;
+
+			if (_participantIndex == 0)
+				return Player;
+
+			return Enemies[_participantIndex - 1];
+		}
+	}
+
 	private FlexBox _enemiesFlexBox;
 	private FlexBox _playerFlexBox;
 	private FlexBox _arenaFlexBox;
-	private double _lastUpdate;
+	private Text _madeDecision;
+	private double _timeForNextUpdate;
 	
 	private int TurnsInCycle => 1 + Enemies.Count;
 	private int _participantIndex;
@@ -30,12 +51,8 @@ public class FightingArea : Element
 	public FightingArea(Player player)
 	{
 		Player = player;
+		player.FightingArea = this;
 		Enemies = new List<EnemyBase>();
-
-		_playerRenderer = new PlayerAtArena(player)
-		{
-			Size = new Size(16, 4)
-		};
 
 		_enemiesFlexBox = new FlexBox()
 		{
@@ -58,9 +75,17 @@ public class FightingArea : Element
 			Alignment = Alignment.Center,
 			AlwaysRecalculate = true
 		};
+
+		_madeDecision = new Text()
+		{
+			Size = new Size(16, 3),
+			Alignment = Alignment.Center,
+			Foreground = Color.Coral
+		};
 		
-		_playerFlexBox.Children.Add(_playerRenderer);
+		_playerFlexBox.Children.Add(player.AtArenaRenderer);
 		_arenaFlexBox.Children.Add(_enemiesFlexBox);
+		_arenaFlexBox.Children.Add(_madeDecision);
 		_arenaFlexBox.Children.Add(_playerFlexBox);
 	}
 	
@@ -76,10 +101,9 @@ public class FightingArea : Element
 		
 		_arenaFlexBox.Update();
 
-		if (Time.NowSeconds - _lastUpdate > 1)
+		if (IsFighting && Time.NowSeconds > _timeForNextUpdate)
 		{
 			ProcessCycle();
-			_lastUpdate = Time.NowSeconds;
 		}
 	}
 
@@ -107,11 +131,7 @@ public class FightingArea : Element
 			enemy.Size = new Size(24, 4);
 		}
 
-		// TODO: Refactor
-		//while (IsFighting)
-		//{
-		//	ProcessCycle();
-		//}
+		_timeForNextUpdate = -1;
 	}
 
 	private EnemyBase GetRandomEnemy()
@@ -126,26 +146,47 @@ public class FightingArea : Element
 
 	private void ProcessCycle()
 	{
+		SyncHighlightState();
 		if (_participantIndex >= TurnsInCycle)
 		{
 			EndTurn();
 		}
 		else
 		{
-			MakeTurn();
+			var participant = Participant;
+			if (participant == null)
+			{
+				_participantIndex++;
+				return;
+			}
+
+			if (participant.IsAlive == false)
+			{
+				_participantIndex++;
+				return;
+			}
+			
+			var decision = participant.MakeTurn(this);
+			if (decision == null)
+			{
+				_madeDecision.Value = "Waiting for turn...";
+				return;
+			}
+
+			_madeDecision.Value = decision.Name;
+			decision.PerformAction();
+			_timeForNextUpdate = Time.NowSeconds + 3;
 			_participantIndex++;
 		}
 	}
 
-	private void MakeTurn()
+	private void SyncHighlightState()
 	{
-		if (_participantIndex == 0)
+		Player.Highlighted = _participantIndex == 0;
+
+		for (int i = 0; i < Enemies.Count; i++)
 		{
-			Player.MakeTurn(this).PerformAction();
-		}
-		else
-		{
-			Enemies[_participantIndex - 1].MakeTurn(this).PerformAction();
+			Enemies[i].Highlighted = i == _participantIndex - 1;
 		}
 	}
 
@@ -174,11 +215,21 @@ public class FightingArea : Element
 		{
 			IsFighting = false;
 			IsPlayerWin = false;
+			_madeDecision.Value = "Enemies win";
 		}
 		else if (Enemies.All(enemy => enemy.IsAlive == false))
 		{
 			IsFighting = false;
 			IsPlayerWin = true;
+			_madeDecision.Value = "Player win";
+		}
+	}
+
+	public void HandleInput(ConsoleKey key)
+	{
+		if (Participant is Player player)
+		{
+			player.HandleInput(key);
 		}
 	}
 }
