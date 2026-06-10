@@ -17,6 +17,8 @@ public class E01_HelloWorld
 			Foreground = Color.Bisque,
 			Value = "Hello World"
 		});
+        
+        AddHelpTips(elements);
 
 		while (true)
 		{
@@ -31,9 +33,31 @@ public class E01_HelloWorld
 				switch (key.Key)
 				{
 					case ConsoleKey.End:
+                    case ConsoleKey.Q:
 						return;
 				}
 			}
 		}
 	}
+
+    public static void AddHelpTips(List<Element> elements)
+    {
+        var flexBox = new FlexBox()
+        {
+            GrowDirection = GrowDirection.Vertical,
+            Size = new Size(30, 10),
+            Position = new Point(0, 4)
+        };
+        
+        flexBox.Children.Add(new Text()
+        {
+            Foreground = Color.Goldenrod,
+            Value = "Press Q to return to menu",
+            Size = new Size(30, 1)
+        });
+        
+        elements.Add(flexBox);
+        
+        flexBox.RequestRecalculation();
+    }
 }

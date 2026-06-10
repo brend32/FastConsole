@@ -32,7 +32,7 @@ public static class Windows
 		try
 		{
 			var @out = GetStdHandle(STD_OUTPUT_HANDLE);
-			if (!GetConsoleMode(@out, out var mode))
+			if (!GetConsoleMode(@out, out uint mode))
 			{
 				return false;
 			}

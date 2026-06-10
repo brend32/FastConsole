@@ -59,6 +59,8 @@ public class E03_TextStyles
 			Value = "Bold and Italic",
 			Style = TextStyle.Bold | TextStyle.Italic // Оператор | поєднує і Bold і Italic
 		});
+        
+        AddHelpTips(elements);
 		
 		while (true)
 		{
@@ -73,9 +75,31 @@ public class E03_TextStyles
 				switch (key.Key)
 				{
 					case ConsoleKey.End:
+                    case ConsoleKey.Q:
 						return;
 				}
 			}
 		}
 	}
+
+    public static void AddHelpTips(List<Element> elements)
+    {
+        var flexBox = new FlexBox()
+        {
+            GrowDirection = GrowDirection.Vertical,
+            Size = new Size(30, 10),
+            Position = new Point(0, 8)
+        };
+        
+        flexBox.Children.Add(new Text()
+        {
+            Foreground = Color.Goldenrod,
+            Value = "Press Q to return to menu",
+            Size = new Size(30, 1)
+        });
+        
+        elements.Add(flexBox);
+        
+        flexBox.RequestRecalculation();
+    }
 }

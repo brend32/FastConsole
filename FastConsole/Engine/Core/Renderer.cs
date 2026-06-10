@@ -242,6 +242,25 @@ public class Renderer
 			OutputToConsole();
 		}
 	}
+    
+    public static void ClearScreen()
+    {
+        for (int y = 0; y < _windowLastHeight && y < _screenBuffer.GetLength(1); y++)
+        {
+            for (int x = 0; x < _windowLastWidth && x < _screenBuffer.GetLength(0); x++)
+            {
+                _screenBuffer[x, y] = new Node()
+                {
+                    Value = ' '
+                };
+            }
+        }
+
+        if (DebugMode)
+        {
+            OutputToConsole();
+        }
+    }
 
 	public static bool IsOutsideBuffer(Point position)
 	{
@@ -335,7 +354,7 @@ public class Renderer
 
 	public static void OutputToConsole()
 	{
-		Console.CursorVisible = DebugMode ^ true;
+		Console.CursorVisible = DebugMode;
 		Console.SetCursorPosition(0, 0);
 		int consoleWidth = Console.WindowWidth;
 		int consoleHeight = Console.WindowHeight - 1;

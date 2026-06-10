@@ -22,11 +22,23 @@ public class E07_Canvas
 		canvas.FillCell(19, 0, Color.Yellow);
 		
 		elements.Add(canvas);
+
+        var cellSize = new Text()
+        {
+            Size = new Size(30, 1),
+            Foreground = Color.Aqua,
+            Position = new Point(2, 12),
+        };
+        
+        elements.Add(cellSize);
+        
+        AddHelpTips(elements);
 		
 		while (true)
 		{
 			if (Time.TryUpdate()) // Оновлюємо час та тримаємо FPS у нормі
-			{
+            {
+                cellSize.Value = $"Cell size: {canvas.CellWidth}";
 				Element.UpdateAndRender(elements); // Оновлення і відмальовка елементів
 			}
 
@@ -36,6 +48,7 @@ public class E07_Canvas
 				switch (key.Key)
 				{
 					case ConsoleKey.End:
+                    case ConsoleKey.Q:
 						return;
 					
 					case ConsoleKey.E:
@@ -49,4 +62,37 @@ public class E07_Canvas
 			}
 		}
 	}
+    
+    public static void AddHelpTips(List<Element> elements)
+    {
+        var flexBox = new FlexBox()
+        {
+            GrowDirection = GrowDirection.Vertical,
+            Size = new Size(30, 10),
+            Position = new Point(0, 14)
+        };
+        
+        flexBox.Children.Add(new Text()
+        {
+            Foreground = Color.Goldenrod,
+            Value = "Press Q to return to menu",
+            Size = new Size(30, 1)
+        });
+        flexBox.Children.Add(new Text()
+        {
+            Foreground = Color.Goldenrod,
+            Value = "Press E to increase cell size",
+            Size = new Size(38, 1)
+        });
+        flexBox.Children.Add(new Text()
+        {
+            Foreground = Color.Goldenrod,
+            Value = "Press S to decrease cell size",
+            Size = new Size(38, 1)
+        });
+        
+        elements.Add(flexBox);
+        
+        flexBox.RequestRecalculation();
+    }
 }

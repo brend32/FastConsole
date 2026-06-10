@@ -7,6 +7,7 @@ class Program
 	public static void Main()
 	{
 		Windows.ForceUpgradeToAnsi();
+		Console.CursorVisible = false;
 		
 		SceneManager.OpenScene(new MenuScene());
 		SceneManager.Run();

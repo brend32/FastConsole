@@ -30,6 +30,8 @@ public class E04_Box
 		box2.Background = Color.Coral;
 		box2.Foreground = Color.Black;
 		elements.Add(box2);
+        
+        AddHelpTips(elements);
 
 		while (true)
 		{
@@ -44,9 +46,31 @@ public class E04_Box
 				switch (key.Key)
 				{
 					case ConsoleKey.End:
+                    case ConsoleKey.Q:
 						return;
 				}
 			}
 		}
 	}
+
+    public static void AddHelpTips(List<Element> elements)
+    {
+        var flexBox = new FlexBox()
+        {
+            GrowDirection = GrowDirection.Vertical,
+            Size = new Size(30, 10),
+            Position = new Point(0, 12)
+        };
+        
+        flexBox.Children.Add(new Text()
+        {
+            Foreground = Color.Goldenrod,
+            Value = "Press Q to return to menu",
+            Size = new Size(30, 1)
+        });
+        
+        elements.Add(flexBox);
+        
+        flexBox.RequestRecalculation();
+    }
 }

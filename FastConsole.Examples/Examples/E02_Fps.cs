@@ -24,6 +24,8 @@ public class E02_Fps
 			Position = new Point(0, 1)
 		};
 		elements.Add(targetFpsText);
+        
+        AddHelpTips(elements);
 
 		int i = 0;
 		while (true)
@@ -41,6 +43,7 @@ public class E02_Fps
 				switch (key.Key)
 				{
 					case ConsoleKey.End:
+                    case ConsoleKey.Q:
 						return;
 					
 					case ConsoleKey.F:
@@ -70,4 +73,31 @@ public class E02_Fps
 			}
 		}
 	}
+
+    public static void AddHelpTips(List<Element> elements)
+    {
+        var flexBox = new FlexBox()
+        {
+            GrowDirection = GrowDirection.Vertical,
+            Size = new Size(30, 10),
+            Position = new Point(0, 4),
+        };
+        
+        flexBox.Children.Add(new Text()
+        {
+            Foreground = Color.Goldenrod,
+            Value = "Press Q to return to menu",
+            Size = new Size(30, 1)
+        });
+        flexBox.Children.Add(new Text()
+        {
+            Foreground = Color.Goldenrod,
+            Value = "Press F to change target FPS",
+            Size = new Size(30, 1)
+        });
+        
+        elements.Add(flexBox);
+        
+        flexBox.RequestRecalculation();
+    }
 }
